@@ -528,4 +528,6 @@ power failures, or other emergencies always take priority.
 - Repeatable offline replay tests and a small privacy-safe sample dataset
 - Final wiring diagrams
 - Release packaging and checksums
-- Reddit launch post and repository social preview
+
+The ready-to-adapt community post is in
+[`docs/REDDIT_LAUNCH.md`](docs/REDDIT_LAUNCH.md).
