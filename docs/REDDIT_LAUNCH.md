@@ -77,10 +77,9 @@ and more like a small finished product. What surprises me most is the contrast:
 I spent months thinking about the problem, then built the working system in a
 couple of intense weeks once the right ideas finally clicked.
 
-I would genuinely appreciate technical feedback, especially on how you would
-make the recognizer easier to calibrate for other seven-segment displays — and
-whether anyone else has turned a very ordinary building problem into a wildly
-over-engineered smart-home project.
+I’d love to hear what you think of this little gadget. What other information
+or smart-home controls would be useful on the clock’s display? And what would
+you improve or add to the system next?
 
 Safety note: Call14 never controls movement, doors, brakes or safety circuits.
 It only duplicates a normal hall-button press and observes the existing cabin
