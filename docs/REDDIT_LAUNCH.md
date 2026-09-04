@@ -12,10 +12,17 @@ I live on the 14th floor in Kyiv, so I built a $20 smart elevator companion
 
 ### Post
 
-An air-alert notification arrives. I am getting the children dressed, finding
-their shoes and preparing to leave for shelter. We live on the 14th floor in
+An air-alert notification arrives with enough advance warning to leave safely.
+I am getting the children dressed, finding their shoes and preparing to go to
+the shelter before the immediate danger begins. We live on the 14th floor in
 Kyiv, and the elevator may take five minutes to arrive — or it may already be
 waiting outside. In a moment like that, uncertainty feels longer than it is.
+
+To be clear: we only try to use this head start while there is time for a safe,
+early descent and local guidance permits it. If an attack or explosions are
+already under way, or elevator use is unsafe, we take the stairs. Call14 is a
+convenience that helps us leave earlier, never a reason to ignore emergency
+guidance.
 
 That was the strongest motivation for Call14: press one button while we are
 still getting ready, see where the cabin is and which direction it is moving,
@@ -24,7 +31,9 @@ smart-home discussion with a friend and neighbour, but life in Kyiv gave it a
 very real purpose.
 
 I am an entrepreneur, not a programmer or an electronics engineer. This is my
-first project of this kind, built as a hobby over roughly six months.
+first project of this kind. The idea developed over roughly six months: most of
+that time was spent thinking, researching and finding a safe approach; once the
+plan became clear, I built the working system in a couple of weeks.
 
 The first part was simple in principle: an ESP8266 relay is wired in parallel
 with the existing hall-call button, so it only reproduces an ordinary button
@@ -72,8 +81,9 @@ demos here:
 https://github.com/europaprof/call14
 
 The result looks and behaves less like a prototype from an apartment building
-and more like a small finished product. That still surprises me, because six
-months ago I had never built anything like this.
+and more like a small finished product. What surprises me most is the contrast:
+I spent months thinking about the problem, then built the working system in a
+couple of intense weeks once the right ideas finally clicked.
 
 I would genuinely appreciate technical feedback, especially on how you would
 make the recognizer easier to calibrate for other seven-segment displays — and
