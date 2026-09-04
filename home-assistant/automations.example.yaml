@@ -1,0 +1,37 @@
+- alias: "Call14 — clock button calls elevator"
+  id: call14_clock_button
+  mode: single
+  trigger:
+    - platform: mqtt
+      topic: sdpro/display/call_lift
+      payload: PRESS
+  action:
+    - service: button.press
+      target:
+        entity_id: button.lift_button_call_elevator
+
+- alias: "Call14 — publish lift state to display"
+  id: call14_publish_lift_state
+  mode: restart
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.call14_lift_floor
+        - sensor.call14_lift_direction
+        - sensor.call14_lift_state
+  action:
+    - service: mqtt.publish
+      data:
+        topic: sdpro/display/lift/floor
+        payload: "{{ states('sensor.call14_lift_floor') }}"
+        retain: true
+    - service: mqtt.publish
+      data:
+        topic: sdpro/display/lift/direction
+        payload: "{{ states('sensor.call14_lift_direction') }}"
+        retain: true
+    - service: mqtt.publish
+      data:
+        topic: sdpro/display/lift/state
+        payload: "{{ states('sensor.call14_lift_state') }}"
+        retain: true

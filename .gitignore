@@ -1,0 +1,20 @@
+# Secrets and local configuration
+secrets.*
+*.secret
+*.env
+.env*
+
+# Build output and binary backups
+.pio/
+.esphome/
+*.bin
+*.elf
+__pycache__/
+*.pyc
+
+# Unreviewed source media remains local until redacted
+media/raw/
+
+# OS/editor files
+.DS_Store
+*.swp

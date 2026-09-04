@@ -1,0 +1,15 @@
+[Unit]
+Description=Call14 local seven-segment recognizer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/call14-recognizer.env
+ExecStart=/usr/bin/python3 /opt/call14/recognizer/lift-recognizer-v5.py
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
