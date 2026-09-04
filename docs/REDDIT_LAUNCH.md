@@ -8,27 +8,24 @@ Best fit: `r/homeassistant`
 
 ### Title
 
-I live on the 14th floor in Kyiv, so I built a $20 smart elevator companion
+I built a $20 smart elevator companion so the doors open just as I leave home
 
 ### Post
 
-An air-alert notification arrives with enough advance warning to leave safely.
-I am getting the children dressed, finding their shoes and preparing to go to
-the shelter before the immediate danger begins. We live on the 14th floor in
-Kyiv, and the elevator may take five minutes to arrive — or it may already be
-waiting outside. In a moment like that, uncertainty feels longer than it is.
+I live on the 14th floor. Sometimes the elevator arrives immediately; sometimes
+I wait in the hallway for five minutes or more. I wanted one very simple thing:
+to call it from inside the apartment, see which floor it is on and leave home
+just as it arrives.
 
-To be clear: we only try to use this head start while there is time for a safe,
-early descent and local guidance permits it. If an attack or explosions are
-already under way, or elevator use is unsafe, we take the stairs. Call14 is a
-convenience that helps us leave earlier, never a reason to ignore emergency
-guidance.
+There is a strangely cinematic moment when I close the apartment door, walk to
+the elevator and its doors open immediately in front of me. It feels like a
+tiny superpower — not because the technology is futuristic, but because all the
+small pieces finally work together.
 
-That was the strongest motivation for Call14: press one button while we are
-still getting ready, see where the cabin is and which direction it is moving,
-then leave the apartment at the right moment. The idea had started earlier as a
-smart-home discussion with a friend and neighbour, but life in Kyiv gave it a
-very real purpose.
+The idea began during a smart-home discussion with a friend and neighbour.
+Living in Kyiv added another motivation: when an air alert gives us time to
+leave early, I can call the elevator while getting the children ready instead
+of starting the wait only after everyone is outside the apartment.
 
 I am an entrepreneur, not a programmer or an electronics engineer. This is my
 first project of this kind. The idea developed over roughly six months: most of
@@ -40,11 +37,6 @@ with the existing hall-call button, so it only reproduces an ordinary button
 press. It does not connect to the elevator controller or any safety system. I
 can trigger it from Home Assistant, a Xiaomi wireless button, my phone, or the
 button I added to a tiny ESP8266 clock.
-
-There is a strangely cinematic moment when I close the apartment door, walk to
-the elevator and the doors open immediately in front of me. It feels like a
-tiny superpower — not because the technology is futuristic, but because all the
-small pieces finally work together.
 
 The clock was a cheap AliExpress weather clock. I replaced its firmware and
 built a new interface showing time, weather, energy flow, power-outage state,
@@ -92,8 +84,9 @@ over-engineered smart-home project.
 
 Safety note: Call14 never controls movement, doors, brakes or safety circuits.
 It only duplicates a normal hall-button press and observes the existing cabin
-display. It is not a life-safety system, and official emergency guidance always
-takes priority.
+display. We do not use the elevator during immediate danger or when official
+guidance says not to; in those situations we use the stairs. This is a
+convenience project, not a life-safety system.
 
 ## Suggested first comment
 
