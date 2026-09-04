@@ -38,6 +38,11 @@ press. It does not connect to the elevator controller or any safety system. I
 can trigger it from Home Assistant, a Xiaomi wireless button, my phone, or the
 button I added to a tiny ESP8266 clock.
 
+I did not want the convenience to belong to one apartment only, so every
+neighbour on our floor can also call the elevator through DomoBot, the Telegram
+bot we built for our building. That project will probably be a separate story;
+it uses the same Home Assistant call action described here.
+
 The clock was a cheap AliExpress weather clock. I replaced its firmware and
 built a new interface showing time, weather, energy flow, power-outage state,
 air-alert status, elevator floor and direction. It looks much more finished

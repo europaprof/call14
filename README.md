@@ -31,6 +31,12 @@ into a complete system:
 - a modified inexpensive ESP8266 clock near the apartment door provides a
   physical call button and an always-on status display.
 
+I did not want this convenience to belong to one apartment only, so every
+neighbour on our floor can also call the elevator through **DomoBot**, the
+Telegram bot we built for our building. DomoBot deserves a separate story of
+its own; here it is simply another interface to the same Home Assistant call
+script.
+
 ## See it work
 
 [![Call14 clock demo: press, calling, floor tracking, arrival](media/video/call14-clock-demo.gif)](media/video/call14-clock-demo.mp4)
@@ -180,6 +186,11 @@ The first version solved only one problem: calling the elevator without first
 walking into the hallway. A round Xiaomi smart button that I already used with
 my smart home became the interface. In Home Assistant — and soon in our family
 vocabulary — it was simply called **Lift Button**.
+
+Later, the call action was made available through DomoBot to every resident on
+our floor. The hardware remained exactly the same: the bot only asks Home
+Assistant to run the same short, local call-button pulse. The story of the
+building-wide Telegram bot will be a separate project.
 
 Behind the existing hall-call button, I identified the two contacts closed by a
 normal press and connected an isolated relay contact in parallel. The original
