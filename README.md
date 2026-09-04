@@ -542,3 +542,10 @@ power failures, or other emergencies always take priority.
 
 The ready-to-adapt community post is in
 [`docs/REDDIT_LAUNCH.md`](docs/REDDIT_LAUNCH.md).
+
+
+## Building approval and camera access
+
+Our building is managed by an **OSBB**, the Ukrainian legal form of a homeowners' association. I am a co-owner and also serve on its board. The installation and camera-access arrangements were discussed and agreed with the OSBB. The cameras and processing remain local to the building, and access is managed rather than public.
+
+Regulations and approval procedures differ between countries and buildings, so this exact arrangement should not be assumed to apply everywhere. Anyone adapting the project should first obtain the approvals required by their own building management, homeowners' association, elevator service company, and local regulations.
