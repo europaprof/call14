@@ -8,15 +8,20 @@ Best fit: `r/homeassistant`
 
 ### Title
 
-I built a $20 smart elevator companion that calls the elevator and tracks its floor with computer vision
+I live on the 14th floor in Kyiv, so I built a $20 smart elevator companion
 
 ### Post
 
-I live on the 14th floor in Kyiv. Waiting for the elevator can take five
-minutes, but sometimes it is already outside the door. During air alerts, when
-I am getting the children ready to go to shelter, even a small head start can
-matter. I wanted to call the elevator while we were still putting on our shoes
-and to know where the cabin actually was.
+An air-alert notification arrives. I am getting the children dressed, finding
+their shoes and preparing to leave for shelter. We live on the 14th floor in
+Kyiv, and the elevator may take five minutes to arrive — or it may already be
+waiting outside. In a moment like that, uncertainty feels longer than it is.
+
+That was the strongest motivation for Call14: press one button while we are
+still getting ready, see where the cabin is and which direction it is moving,
+then leave the apartment at the right moment. The idea had started earlier as a
+smart-home discussion with a friend and neighbour, but life in Kyiv gave it a
+very real purpose.
 
 I am an entrepreneur, not a programmer or an electronics engineer. This is my
 first project of this kind, built as a hobby over roughly six months.
@@ -26,6 +31,11 @@ with the existing hall-call button, so it only reproduces an ordinary button
 press. It does not connect to the elevator controller or any safety system. I
 can trigger it from Home Assistant, a Xiaomi wireless button, my phone, or the
 button I added to a tiny ESP8266 clock.
+
+There is a strangely cinematic moment when I close the apartment door, walk to
+the elevator and the doors open immediately in front of me. It feels like a
+tiny superpower — not because the technology is futuristic, but because all the
+small pieces finally work together.
 
 The clock was a cheap AliExpress weather clock. I replaced its firmware and
 built a new interface showing time, weather, energy flow, power-outage state,
@@ -61,8 +71,14 @@ demos here:
 
 https://github.com/europaprof/call14
 
+The result looks and behaves less like a prototype from an apartment building
+and more like a small finished product. That still surprises me, because six
+months ago I had never built anything like this.
+
 I would genuinely appreciate technical feedback, especially on how you would
-make the recognizer easier to calibrate for other seven-segment displays.
+make the recognizer easier to calibrate for other seven-segment displays — and
+whether anyone else has turned a very ordinary building problem into a wildly
+over-engineered smart-home project.
 
 Safety note: Call14 never controls movement, doors, brakes or safety circuits.
 It only duplicates a normal hall-button press and observes the existing cabin
@@ -126,4 +142,3 @@ button, equivalent to pressing that button. The vision side is read-only. It
 does not connect to or command the elevator controller, doors, drive, brakes or
 safety circuits. Installation still needs building approval and qualified
 electrical review where required.
-
