@@ -465,6 +465,15 @@ several independent safeguards:
 In short, image recognition proposes an observation; temporal consistency and
 the elevator's physical behaviour decide whether that observation is believable.
 
+### Live floor recognition
+
+![Live elevator floor and direction recognition in Home Assistant](media/video/ha-elevator-demo-fast-clean.gif)
+
+This is the complete local loop in action: the camera feed stays inside the
+building network, recognizer v5 reads the seven-segment indicator, and Home
+Assistant updates the confirmed floor, direction, movement state, and confidence
+in real time.
+
 ### Testing it like the real world
 
 We recorded and replayed complete rides rather than testing only hand-picked
@@ -533,23 +542,12 @@ This hobby project is not a life-safety or evacuation system. Building rules,
 official emergency guidance, and restrictions on elevator use during fires,
 power failures, or other emergencies always take priority.
 
-### Building approval and camera access
-
-Our building is managed by an **OSBB**, the Ukrainian legal form of a
-homeowners' association. I am a co-owner and also serve on its board. The
-installation and camera-access arrangements were discussed and agreed with the
-OSBB. The cameras and processing remain local to the building, and access is
-managed rather than public.
-
-Regulations and approval procedures differ between countries and buildings, so
-this exact arrangement should not be assumed to apply everywhere. Anyone
-adapting the project should first obtain the approvals required by their own
-building management, homeowners' association, elevator service company, and
-local regulations.
-
 ## Coming next
 
 - One-command recognizer installation helper
 - Repeatable offline replay tests and a small privacy-safe sample dataset
 - Final wiring diagrams
 - Release packaging and checksums
+
+The ready-to-adapt community post is in
+[`docs/REDDIT_LAUNCH.md`](docs/REDDIT_LAUNCH.md).
