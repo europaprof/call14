@@ -87,7 +87,7 @@ Call14 can be reproduced in independent stages:
    [ESPHome configuration](firmware/relay/), then call it from Home Assistant,
    a phone or a wireless button.
 3. **Floor tracking.** Add an authorized camera and adapt the
-   [hybrid v5 recognizer](recognizer/). The included
+   [hybrid v6 recognizer](recognizer/). The included
    [Codex setup prompt](recognizer/CODEX_SETUP_PROMPT.md) guides calibration for
    another indicator instead of reusing camera-specific coordinates blindly.
 4. **Complete Call14 terminal.** Modify the supported clock, flash the
@@ -124,7 +124,7 @@ flowchart LR
     end
 
     subgraph Server[Local server]
-        V5[Hybrid recognizer v5]
+        V6[Aligned hybrid recognizer v6]
     end
 
     Clock -->|PRESS| MQTT
@@ -134,8 +134,8 @@ flowchart LR
     Relay -. parallel contact .-> Hall
 
     Indicator --> Camera
-    Camera -->|local video stream| V5
-    V5 -->|floor + direction + state| MQTT
+    Camera -->|local video stream| V6
+    V6 -->|floor + direction + state| MQTT
     HA -->|display topics| MQTT
     MQTT --> Clock
 ```
@@ -172,7 +172,7 @@ to the 14th floor through the same script used by the physical interfaces.
 MQTT Discovery creates a dedicated elevator device instead of a loose collection
 of values. Alongside the main floor and direction it exposes camera availability,
 recognizer confidence, last-frame time, fault state and whether a value is
-camera-confirmed or estimated. In production v5, dead-reckoned floor prediction
+camera-confirmed or estimated. In production v6, dead-reckoned floor prediction
 is disabled; the screenshot therefore reports `camera` as the source and 100%
 confidence for this observation.
 
@@ -404,6 +404,7 @@ The display looks easy to a human, but it is unusually unfriendly to a camera:
 - the digits and arrows are multiplexed LEDs, so one video frame may capture
   only part of a symbol;
 - perspective turns a clean seven-segment digit into a small, slanted shape.
+- tiny camera or decoder shifts move narrow LED strokes away from fixed masks.
 
 Early OCR and whole-image matching sometimes read `14` as `9`, expanded `1`
 into `11`, lost an arrow for a frame, or accepted a reflection as a new floor.
@@ -439,27 +440,31 @@ the real segments remain consistent.
 
 ### A hybrid recognizer, not one clever threshold
 
-Segment decoding is the primary reader, but production v5 surrounds it with
+Segment decoding is the primary reader, but production v6 surrounds it with
 several independent safeguards:
 
-1. Three consecutive frames are used without blending neighbouring floor
+1. Every crop is first translated back to calibration geometry using stationary
+   metal beside the display. Low-quality alignment fails closed as `unreadable`.
+2. Three consecutive frames are used without blending neighbouring floor
    digits together. Recognition runs at 4 fps.
-2. A segment result is accepted only when its seven-bit pattern is exact, its
+3. Three independent readers inspect green/blue evidence, red-channel evidence
+   and physical segment geometry.
+4. A segment result is accepted only when its seven-bit pattern is exact, its
    confidence clears the calibrated margin, and the floor is physically
    possible from the last confirmed state.
-3. Direction-specific image templates provide a fallback when glare makes the
+5. Direction-specific image templates provide a fallback when glare makes the
    segment evidence uncertain. Up, down, and idle images are never casually
    compared with one another because the illuminated arrow changes the panel.
-4. A state machine normally permits only the current or next valid floor in the
+6. A state machine normally permits only the current or next valid floor in the
    direction of travel. The building's real floor sequence is encoded as
    `1, 4, 5, ... 16`, including the physical jump between floors 1 and 4.
-5. Arrow detection uses hysteresis. Positive light starts movement immediately;
+7. Arrow detection uses a bright core minus nearby background plus hysteresis.
+   Positive light starts movement immediately;
    a short dark scan phase does not stop it. Several consecutive misses are
    required before the state returns to idle.
-6. When a service starts in the middle of a ride or has genuinely lost its
-   position, it may re-synchronize only after the segment decoder and an
-   unrestricted template decoder independently agree for about three seconds.
-7. An unreadable or reflective frame preserves the last confirmed floor instead
+8. A wrong saved position may be corrected only after two physical decoders
+   agree exactly for about three seconds on a well-aligned stationary image.
+9. An unreadable or reflective frame preserves the last confirmed floor instead
    of inventing a more visually tempting answer.
 
 In short, image recognition proposes an observation; temporal consistency and
@@ -470,7 +475,7 @@ the elevator's physical behaviour decide whether that observation is believable.
 ![Live elevator floor and direction recognition in Home Assistant](media/video/ha-elevator-demo-fast-clean.gif)
 
 This is the complete local loop in action: the camera feed stays inside the
-building network, recognizer v5 reads the seven-segment indicator, and Home
+building network, recognizer v6 reads the seven-segment indicator, and Home
 Assistant updates the confirmed floor, direction, movement state, and confidence
 in real time.
 
@@ -478,7 +483,7 @@ in real time.
 
 We recorded and replayed complete rides rather than testing only hand-picked
 still images. The main calibration journey covered `14 → 1 → 16 → 14`; another
-v5 validation sequence covered `1 → 14 → 1 → 16`. Contact sheets show the
+earlier validation sequence covered `1 → 14 → 1 → 16`. Contact sheets show the
 flicker, exposure changes, reflections, and imperfect frames that the algorithm
 must survive between the obvious digits.
 
@@ -494,12 +499,18 @@ New versions first ran as shadow services with separate MQTT topics. Only after
 their output matched the recorded rides and live ground truth were they promoted
 while preserving the existing Home Assistant entity IDs.
 
-The current hybrid v5 has been running continuously since 30 August 2026 with
-no service restarts at the time of this repository audit. In every result checked
-against the real elevator since this version was deployed, the recognized floor
-and direction have been correct: **100% observed accuracy so far**. Day/night
-changes, open doors, crowded rides, and strong reflections have not produced a
-known error in this version.
+The later field failure was especially useful: the same code that had appeared
+stable began confusing floors and getting stuck. A labelled-frame audit showed
+that the crop had shifted vertically by about 4-5 pixels. The old fixed masks
+decoded only 33 of 145 sampled frames correctly; compensating that shift raised
+the direct result to 141 of 145. Version 6 therefore aligns every frame before
+recognition instead of assuming the camera geometry can never move.
+
+The v6 candidate produced 361 correct and 0 wrong accepted results on a fresh
+full-route replay, then 236 correct and 0 wrong on an independent holdout ride.
+It also passed deliberate wrong-state recovery, lost-alignment and stalled-stream
+tests. Those measured runs are stronger evidence than the earlier short period
+of apparently perfect daily operation.
 
 This is a report from daily operation on one installation, not a claim of
 universal, formally measured 100% accuracy on every elevator and camera. The
@@ -512,10 +523,10 @@ excluded.
 
 ## Project status
 
-The system is working and used daily. Public, redacted source is now included
+The system is working and used daily. Public, redacted source is included
 for the relay, display and recognizer, together with example Home Assistant
-automation, architecture notes and recovery guidance. Final packaging and
-installation testing are still in progress before the first tagged release.
+automation, architecture notes and recovery guidance. Version 6 adds camera
+registration and reproducible reliability tests.
 
 ## Author
 

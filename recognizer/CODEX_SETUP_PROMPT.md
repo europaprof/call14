@@ -16,7 +16,8 @@ elevator controller, doors, movement, brakes, or safety circuits.
 
 Please do the following:
 
-1. Inspect `recognizer/lift-recognizer-v5.py`, `docs/RECOGNIZER_EVOLUTION.md`,
+1. Inspect `recognizer/lift-recognizer-v6.py`, `recognizer/lift_alignment.py`,
+   `docs/RECOGNIZER_EVOLUTION.md`, `docs/ALIGNMENT.md`,
    and the example environment file. Explain which parameters are specific to
    the Call14 installation.
 2. Inspect my supplied sample video/images. First make privacy-safe crops that
@@ -31,22 +32,27 @@ Please do the following:
 5. Calibrate small evidence masks inside segments `a` through `g` and the tens
    digit. Visualize the masks on a real cropped frame so I can approve their
    locations.
-6. Generate direction-specific fallback templates and thresholds. Keep segment
+6. Build a per-camera alignment reference from stationary metal outside the LED
+   display. Demonstrate that digits and arrows do not influence registration,
+   and reject frames below a measured safe correlation threshold.
+7. Generate direction-specific fallback templates and thresholds. Keep segment
    decoding primary when its exact code is clean; use template matching only as
    independent fallback evidence.
-7. Configure physical validation so a reflection cannot produce an impossible
+8. Configure physical validation so a reflection cannot produce an impossible
    jump. Encode my actual floor order, including any skipped labels such as a
    jump from 1 to 4.
-8. Preserve the last confirmed floor on unreadable frames. Do not add
+9. Preserve the last confirmed floor on unreadable frames. Do not add
    time-based dead reckoning that invents floors after uncertain arrow evidence.
-9. Add arrow hysteresis for LED scan gaps and strict re-synchronization that
-   requires sustained agreement between the segment and unrestricted template
-   decoders while stopped.
-10. Create an offline replay test from at least two complete labelled rides.
+10. Add arrow core/background contrast and hysteresis for LED scan gaps. Allow
+    stationary recovery only after sustained exact agreement of two independent
+    physical segment decoders on a well-aligned image.
+11. Create an offline replay test from at least two complete labelled rides.
     Report every confirmed-floor transition and compare it with ground truth.
-11. Run the candidate as a shadow service with a separate MQTT prefix. Do not
+12. Test alignment loss, a deliberately wrong persisted floor, a stalled RTSP
+    producer and MQTT timeout handling.
+13. Run the candidate as a shadow service with a separate MQTT prefix. Do not
     replace an existing working service until replay and live observations pass.
-12. Produce generic installation files and documentation. Before finishing,
+14. Produce generic installation files and documentation. Before finishing,
     scan the complete diff for passwords, tokens, private IP addresses, camera
     URLs, personal data, and identifiable images.
 

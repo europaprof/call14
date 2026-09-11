@@ -46,7 +46,7 @@ segments at stable points rather than recognize the complete photographed digit.
 The implementation measures masks for `a–g` plus the tens digit and converts the
 active set into an exact seven-segment code.
 
-### 5. Production hybrid
+### 5. Production hybrid v5
 
 The current implementation combines:
 
@@ -68,6 +68,24 @@ The state machine knows the actual served sequence:
 This is why a clean-looking but impossible digit does not overwrite the current
 floor.
 
+### 6. Spatial registration in v6
+
+After several apparently stable days the recognizer began confusing floors and
+lagging again. Process health, illumination and saved state were not the cause.
+Comparing fresh labelled frames with the calibration data revealed a vertical
+image shift of about 4-5 pixels. The narrow fixed masks were now measuring LED
+edges and gaps.
+
+Version 6 aligns every crop before decoding. It compares gradients on stationary
+metal outside the digits and arrows across a small translation window, then
+warps the winning frame back into calibration coordinates. Registration quality
+below the safe threshold produces `unreadable`; it never authorizes a guess.
+
+The decoder was also hardened with independent red-channel and physical-geometry
+readers, arrow core/background contrast, persisted state, exact two-decoder
+stationary recovery, an RTSP frame watchdog, a bounded JPEG buffer and MQTT
+publish timeouts.
+
 ## Validation
 
 Development used recorded end-to-end journeys, frame extraction and contact
@@ -81,15 +99,22 @@ gaps, a digit changing between adjacent frames, lighting transitions at open
 doors, crowds, and reflections. Candidate releases ran in shadow mode before
 replacing the previous MQTT producer.
 
+For v6, the alignment diagnosis and holdout results were measured separately:
+
+- fixed masks before alignment: 33/145 correctly decoded sampled frames;
+- the same sample after alignment: 141/145;
+- fresh full-route replay: 361 correct, 0 wrong accepted results;
+- independent holdout ride: 236 correct, 0 wrong accepted results;
+- wrong persisted floor, alignment loss and stalled-stream tests: passed.
+
 The public contact sheets in `media/recognizer/` are cropped to the indicator.
 They demonstrate difficult input without publishing identifiable cabin footage.
 One full empty-cabin frame is included to show how small the indicator is in the
 original camera image.
 
-At the time of publication, all v5 results manually checked against the real
-elevator have been correct, giving 100% observed accuracy so far. This describes
-the observed production run on this installation; it is not a universal accuracy
-guarantee or a substitute for a separately labelled benchmark dataset.
+These are measured results for the included camera and recordings, not a
+universal accuracy guarantee or a substitute for calibration and labelled
+acceptance rides on another installation.
 
 ## Authorship and collaboration
 

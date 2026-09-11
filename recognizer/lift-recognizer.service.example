@@ -6,10 +6,12 @@ Wants=network-online.target
 [Service]
 Type=simple
 EnvironmentFile=/etc/call14-recognizer.env
-ExecStart=/usr/bin/python3 /opt/call14/recognizer/lift-recognizer-v5.py
+ExecStart=/usr/bin/python3 /opt/call14/recognizer/lift-recognizer-v6.py
 Restart=always
 RestartSec=5
 NoNewPrivileges=true
+StateDirectory=call14-recognizer
+StateDirectoryMode=0750
 
 [Install]
 WantedBy=multi-user.target

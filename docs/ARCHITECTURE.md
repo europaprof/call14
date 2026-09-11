@@ -32,7 +32,7 @@ Original red indicator
           ↓
 Authorized cabin camera
           ↓
-Local crop + hybrid recognizer v5
+Local crop + aligned hybrid recognizer v6
           ↓
 MQTT discovery and retained state
           ↓
