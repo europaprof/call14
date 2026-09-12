@@ -1,4 +1,4 @@
-# Call14 hybrid floor recognizer v6
+# Call14 hybrid floor recognizer v6.0.1
 
 This service turns a fixed camera view of a seven-segment elevator indicator
 into local MQTT state for Home Assistant. It first registers every frame to a
@@ -72,6 +72,10 @@ The bundled Call14 camera calibration passed:
 
 These results describe this installation and test material, not a universal
 accuracy guarantee. Every different camera still requires its own calibration.
+
+Version 6.0.1 also protects the two closest production ambiguities: a shared
+tens-mask miss can no longer turn 14 into 4, and an exact 8/9 disagreement must
+be corroborated by a focused whole-digit comparison.
 
 ## Privacy and safety
 

@@ -228,6 +228,17 @@ class Recognizer:
         red=self.classify_segment_model(display,self.red_segment_model,'red')
         return primary,red
 
+    def white_tens_on(self, display):
+        if not self.segment_model:
+            return None
+        _,green,blue=display.split()
+        pixels=ImageChops.darker(green,blue).load()
+        reference=sorted(pixels[x,y] for y in range(2,64) for x in range(37,71))
+        scale=max(1.0,reference[int(len(reference)*0.95)])
+        item=self.segment_model['tens']
+        value=sum(pixels[x,y]/scale for x,y in item['mask'])/len(item['mask'])
+        return value>=item['threshold']
+
     def classify_red_geometry(self, display):
         # The camera can switch between white-saturated and pure-red rendering
         # of the same LED bar.  Decode the actual seven physical strokes from
@@ -320,6 +331,7 @@ class Recognizer:
             frame=self.alignment.apply(frame)
             if self.alignment.quality<0.45:
                 self.frames.clear(); self.candidate=None; self.candidate_count=0
+                self.resync_candidate=None; self.resync_count=0
                 self.publish({'floor':None,'confirmed_floor':self.confirmed_floor,
                     'state':'unreadable','direction':'unknown','moving':False,'display':'?',
                     'fault':False,'camera_online':True,'confidence':0.0,
@@ -411,6 +423,17 @@ class Recognizer:
         # distance=0.422 and margin=0.031). Only an exceptionally clear and
         # well-separated template may act without segment consensus.
         template_reliable=(dist<0.40 and margin>0.05 and floor in VALID_FLOORS)
+        # 8/9 differ only by e. Require whole-digit corroboration when the
+        # independent red and physical-geometry decoders disagree exactly.
+        pair_conflict=({red_floor,geometry_floor}=={8,9} and
+                       red_errors==0 and geometry_errors==0)
+        if pair_conflict:
+            pair_floor,pair_dist,pair_margin,_=self.classify_floor(display,direction,{8,9})
+            pair_confirmed=(pair_floor==geometry_floor and pair_dist<0.30 and pair_margin>0.01)
+            segment_reliable=False
+            red_reliable=False
+            template_reliable=False
+            geometry_reliable=(pair_confirmed and geometry_floor in allowed_now)
         # Segments are primary when their seven-bit code is clean and physically
         # possible.  Otherwise retain the proven directional template fallback.
         if segment_reliable:
@@ -422,7 +445,7 @@ class Recognizer:
         elif geometry_reliable:
             floor=geometry_floor
             confidence=max(confidence,0.70 if geometry_errors else 0.90)
-        if self.frame_count % 16 == 0 or self.confirmed_floor is None:
+        if direction=='none' or self.frame_count % 16 == 0 or self.confirmed_floor is None:
             self.all_floor_cache=self.classify_floor(display,direction,VALID_FLOORS)
         all_floor,all_dist,all_margin,all_confidence=self.all_floor_cache
         activity=digit_activity(display)
@@ -433,18 +456,34 @@ class Recognizer:
         # to leave the floor; physical digit decoders remain immediate.
         template_timing_ok=(floor==self.confirmed_floor or now-self.last_progress>=2.0)
         reliable=decoder_reliable or (template_reliable and template_timing_ok)
+        # Cold startup must not publish a missing tens digit before recovery.
+        if (self.confirmed_floor is None and direction=='none' and
+                all_floor in VALID_FLOORS and all_dist<0.30 and all_margin>0.01 and
+                floor!=all_floor):
+            reliable=False
         resync_floor=None
         # A saved/wrong state must be recoverable. Require exact agreement of
         # two physical decoders after registration, never an image template,
         # sustained for three seconds at rest. This also corrects 8 -> 7.
         exact_agreement=(self.alignment is not None and self.alignment.quality>=0.6 and
                          red_floor==geometry_floor and red_floor in VALID_FLOORS and
-                         red_errors==0 and geometry_errors==0 and red_quality>=0.015)
+                         red_errors==0 and geometry_errors==0 and red_quality>=0.015 and
+                         all_floor==red_floor and all_dist<0.30 and all_margin>0.01)
         if direction=='none' and exact_agreement:
             resync_floor=red_floor
+        elif (direction=='none' and self.alignment is not None and self.alignment.quality>=0.6 and
+              red_floor in VALID_FLOORS and geometry_floor==red_floor and
+              red_errors==0 and geometry_errors==0 and red_quality>=0.015 and
+              all_floor in VALID_FLOORS and all_floor%10==red_floor%10 and
+              all_dist<0.30 and all_margin>0.01 and
+              self.white_tens_on(arrow_display)==(all_floor>=10)):
+            # Separate white-channel tens evidence plus the whole-digit template
+            # resolves the shared red-mask failure without inventing a digit.
+            resync_floor=all_floor
         elif self.confirmed_floor is None:
             if (direction=='none' and activity>150 and geometry_floor in VALID_FLOORS and
-                    geometry_errors<=1 and geometry_margin>=1):
+                    geometry_errors<=1 and geometry_margin>=1 and
+                    geometry_floor==all_floor and all_dist<0.30 and all_margin>0.01):
                 resync_floor=geometry_floor
             elif (direction=='none' and activity>150 and segment_errors==0 and
                   segment_quality>=0.05 and segment_floor==all_floor and

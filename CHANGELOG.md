@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.0.1 - 2026-09-12
+
+- Prevented a shared tens-mask failure from changing floor 14 to 4 while idle.
+- Added independent white-channel tens evidence and fresh whole-digit template
+  corroboration before stationary floor recovery.
+- Prevented a cold start from publishing a missing-tens result as confirmed.
+- Resolved exact 8/9 decoder conflicts by requiring the physical geometry to
+  agree with a focused whole-digit comparison.
+- Cleared pending stationary recovery whenever panel alignment is lost.
+- Recomputed unrestricted templates on every idle frame so recovery never uses
+  a stale moving-frame classification.
+
+Regression coverage after these fixes: 361/361 labelled observations on the
+primary ride and 236/236 on an independent holdout ride, with targeted 14/4 and
+8/9 conflict tests passing in both directions.
+
 ## 6.0.0 - 2026-09-12
 
 Version 6 fixes the long-running degradation that looked like recognition was
